@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Halal or Haram? — Islamic Kids Game</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+
+  body{
+    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+    background:#f5f5f5;
+    min-height:100vh;
+    display:flex;
+    align-items:flex-start;
+    justify-content:center;
+    padding:24px 16px 48px;
+  }
+
+  .game-wrapper{
+    background:#ffffff;
+    border-radius:20px;
+    box-shadow:0 2px 16px rgba(0,0,0,0.08);
+    width:100%;
+    max-width:480px;
+    padding:28px 24px;
+    min-height:560px;
+  }
+
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);}
+
+  .top-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;}
+
+  .game-label{font-size:13px;font-weight:600;color:#6b7280;letter-spacing:.5px;text-transform:uppercase;}
+
+  .stat-chips{display:flex;gap:8px;align-items:center;}
+
+  .chip{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;font-size:13px;font-weight:600;border:1.5px solid;}
+
+  .chip-score{background:#EAF3DE;color:#27500A;border-color:#97C459;}
+  .chip-life{background:#FCEBEB;color:#791F1F;border-color:#F09595;gap:4px;}
+  .chip-step{background:#E6F1FB;color:#0C447C;border-color:#85B7EB;}
+
+  .q-card{background:#f9fafb;border:1px solid #e5e7eb;border-radius:16px;padding:28px 20px;text-align:center;margin-bottom:20px;}
+
+  .cat-pill{display:inline-block;padding:3px 12px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;margin-bottom:14px;background:#EEEDFE;color:#3C3489;border:1px solid #AFA9EC;}
+
+  .item-icon{font-size:60px;display:block;margin-bottom:12px;line-height:1;}
+
+  .item-name{font-size:24px;font-weight:600;color:#111827;margin-bottom:4px;}
+
+  .item-hint{font-size:13px;color:#6b7280;}
+
+  .prog-track{height:4px;background:#e5e7eb;border-radius:4px;margin-top:18px;overflow:hidden;}
+
+  .prog-fill{height:100%;background:#3B6D11;border-radius:4px;transition:width .4s ease;}
+
+  .btn-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;}
+
+  .ans-btn{
+    border:2px solid;
+    border-radius:14px;
+    padding:20px 12px;
+    cursor:pointer;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    transition:transform .12s ease, background .12s ease;
+    background:#ffffff;
+    font-family:inherit;
+  }
+
+  .ans-btn:hover{transform:translateY(-2px);}
+  .ans-btn:active{transform:scale(.97);}
+  .ans-btn:focus-visible{outline:3px solid #378ADD;outline-offset:3px;}
+
+  .halal-btn{border-color:#3B6D11;color:#27500A;}
+  .halal-btn:hover{background:#EAF3DE;}
+
+  .haram-btn{border-color:#A32D2D;color:#791F1F;}
+  .haram-btn:hover{background:#FCEBEB;}
+
+  .btn-icon{font-size:30px;display:block;}
+  .btn-title{font-size:17px;font-weight:600;}
+  .btn-sub{font-size:11px;font-weight:400;opacity:.7;letter-spacing:.3px;}
+
+  .fb-panel{
+    border-radius:14px;
+    padding:16px 18px;
+    margin-bottom:14px;
+    display:flex;
+    gap:14px;
+    align-items:flex-start;
+  }
+
+  .fb-correct{background:#EAF3DE;border:1.5px solid #97C459;}
+  .fb-wrong{background:#FCEBEB;border:1.5px solid #F09595;}
+
+  .fb-icon{font-size:24px;flex-shrink:0;margin-top:2px;}
+  .fb-title{font-size:15px;font-weight:600;margin-bottom:3px;}
+  .fb-title.correct-t{color:#27500A;}
+  .fb-title.wrong-t{color:#791F1F;}
+  .fb-text{font-size:13px;color:#4b5563;line-height:1.5;}
+
+  .next-btn{
+    width:100%;
+    padding:15px;
+    border-radius:12px;
+    border:none;
+    background:#1D9E75;
+    color:#fff;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    letter-spacing:.2px;
+    transition:background .15s;
+    font-family:inherit;
+  }
+
+  .next-btn:hover{background:#0F6E56;}
+  .next-btn:focus-visible{outline:3px solid #378ADD;outline-offset:3px;}
+
+  .results{text-align:center;padding:8px 0;}
+
+  .res-emoji{font-size:56px;display:block;margin-bottom:14px;}
+
+  .res-title{font-size:24px;font-weight:600;color:#111827;margin-bottom:10px;}
+
+  .stars{display:flex;justify-content:center;gap:6px;font-size:30px;margin-bottom:14px;}
+
+  .res-score{font-size:44px;font-weight:700;color:#111827;margin-bottom:4px;}
+
+  .res-sub{font-size:14px;color:#6b7280;margin-bottom:24px;line-height:1.5;}
+
+  .divider{height:1px;background:#e5e7eb;margin:18px 0;}
+
+  .review-list{text-align:left;margin-bottom:20px;}
+
+  .rev-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:6px;
+    border:1px solid #e5e7eb;
+    background:#ffffff;
+  }
+
+  .rev-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .rev-dot-ok{background:#3B6D11;}
+  .rev-dot-no{background:#E24B4A;}
+
+  .rev-icon{font-size:22px;flex-shrink:0;}
+
+  .rev-text{flex:1;}
+
+  .rev-name{font-size:14px;font-weight:600;color:#111827;}
+
+  .rev-verdict{font-size:12px;color:#6b7280;}
+
+  .again-btn{
+    width:100%;
+    padding:15px;
+    border-radius:12px;
+    border:2px solid #1D9E75;
+    background:transparent;
+    color:#0F6E56;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .15s,color .15s;
+    font-family:inherit;
+  }
+
+  .again-btn:hover{background:#EAF3DE;}
+  .again-btn:focus-visible{outline:3px solid #378ADD;outline-offset:3px;}
+
+  .branding{
+    text-align:center;
+    margin-top:20px;
+    font-size:12px;
+    color:#9ca3af;
+  }
+
+  .branding a{color:#1D9E75;text-decoration:none;font-weight:600;}
+  .branding a:hover{text-decoration:underline;}
+
+  @media(max-width:480px){
+    body{padding:0;}
+    .game-wrapper{border-radius:0;box-shadow:none;min-height:100vh;}
+  }
+</style>
+</head>
+<body>
+
+<div class="game-wrapper">
+  <h2 class="sr-only">Halal and Haram quiz game for kids — tap Halal or Haram for each item shown.</h2>
+  <div id="ga"></div>
+  <div class="branding">Made with ❤️ by <a href="https://www.youtube.com/@NoorayaStories" target="_blank">Nooraya Stories</a></div>
+</div>
+
+<script>
+const ITEMS=[
+  {emoji:'🐄',name:'Beef',hint:'Cow meat, properly slaughtered',answer:'halal',explanation:'Beef from a halal-slaughtered cow is allowed in Islam.',category:'Food'},
+  {emoji:'🐖',name:'Pork',hint:'Meat from a pig',answer:'haram',explanation:'Pork is explicitly forbidden in the Quran (Al-Baqarah 2:173).',category:'Food'},
+  {emoji:'🍎',name:'Apple',hint:'A fresh fruit',answer:'halal',explanation:'All fruits are halal and a blessing from Allah.',category:'Food'},
+  {emoji:'🍷',name:'Wine',hint:'An alcoholic drink',answer:'haram',explanation:'All intoxicants are forbidden in Islam (Al-Maidah 5:90).',category:'Drink'},
+  {emoji:'🐟',name:'Fish',hint:'Seafood from the ocean',answer:'halal',explanation:'Fish and most seafood are halal for Muslims.',category:'Food'},
+  {emoji:'🎰',name:'Gambling',hint:'Betting money on games',answer:'haram',explanation:'Gambling causes harm and injustice — forbidden in Islam.',category:'Action'},
+  {emoji:'🥛',name:'Milk',hint:'Drink from a cow',answer:'halal',explanation:'Milk is a pure and halal drink mentioned in the Quran.',category:'Drink'},
+  {emoji:'🍺',name:'Beer',hint:'An alcoholic drink',answer:'haram',explanation:'Beer contains alcohol which is haram in Islam.',category:'Drink'},
+  {emoji:'🐓',name:'Chicken',hint:'Poultry, properly slaughtered',answer:'halal',explanation:'Chicken slaughtered in the name of Allah is halal.',category:'Food'},
+  {emoji:'🦁',name:'Lion meat',hint:'Meat of a wild predator',answer:'haram',explanation:'Wild animals with fangs are not halal to eat.',category:'Food'},
+  {emoji:'🍯',name:'Honey',hint:'Sweet nectar from bees',answer:'halal',explanation:'Honey is praised as healing in the Quran (16:69).',category:'Food'},
+  {emoji:'🐸',name:'Frog',hint:'A small amphibian',answer:'haram',explanation:'The Prophet ﷺ forbade killing and eating frogs.',category:'Food'},
+  {emoji:'💊',name:'Medicine',hint:'Prescribed by a doctor',answer:'halal',explanation:'Taking medicine to cure illness is halal and encouraged.',category:'Action'},
+  {emoji:'🤥',name:'Lying',hint:'Saying something false',answer:'haram',explanation:'Lying is forbidden — the Prophet ﷺ commanded truthfulness.',category:'Action'},
+  {emoji:'🎁',name:'Giving charity',hint:'Helping those in need',answer:'halal',explanation:'Sadaqah (charity) is highly rewarded by Allah.',category:'Action'},
+  {emoji:'🚬',name:'Smoking',hint:'Cigarettes and tobacco',answer:'haram',explanation:'Smoking harms the body, which Islam forbids.',category:'Action'},
+  {emoji:'🕌',name:'Going to masjid',hint:'House of Allah',answer:'halal',explanation:'Visiting the masjid for prayer is highly recommended.',category:'Action'},
+  {emoji:'🐠',name:'Shrimp',hint:'A small sea creature',answer:'halal',explanation:'Most scholars agree shrimp is halal seafood.',category:'Food'},
+  {emoji:'🍇',name:'Grapes',hint:'A sweet fruit',answer:'halal',explanation:'Grapes are halal — only grape wine is forbidden.',category:'Food'},
+  {emoji:'🤝',name:'Kindness',hint:'Being good to others',answer:'halal',explanation:'Kindness is a beautiful virtue beloved by Allah.',category:'Action'},
+  {emoji:'🦊',name:'Fox meat',hint:'Meat of a wild animal',answer:'haram',explanation:'Foxes are predatory — not halal to eat.',category:'Food'},
+  {emoji:'🥩',name:'Pork sausage',hint:'Made from pig meat',answer:'haram',explanation:'Anything made from pig is haram.',category:'Food'},
+  {emoji:'📖',name:'Reading Quran',hint:'The holy book of Islam',answer:'halal',explanation:'Reciting and learning the Quran is an act of worship.',category:'Action'},
+  {emoji:'🦴',name:'Blood',hint:'Liquid blood from animals',answer:'haram',explanation:'Consuming blood is explicitly forbidden in the Quran.',category:'Food'},
+];
+
+let qs=[],cur=0,score=0,lives=3,answered=false,history=[];
+
+function shuffle(a){return[...a].sort(()=>Math.random()-.5);}
+
+function start(){
+  qs=shuffle(ITEMS).slice(0,10);
+  cur=0;score=0;lives=3;answered=false;history=[];
+  render();
+}
+
+function lifeDots(){
+  return Array.from({length:3},(_,i)=>
+    `<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:${i<lives?'#E24B4A':'#e5e7eb'};border:1.5px solid ${i<lives?'#A32D2D':'#d1d5db'};"></span>`
+  ).join('');
+}
+
+function render(){
+  if(cur>=qs.length){renderResults();return;}
+  const q=qs[cur];
+  const prog=Math.round((cur/qs.length)*100);
+  document.getElementById('ga').innerHTML=`
+    <div class="top-bar">
+      <span class="game-label">Halal or Haram?</span>
+      <div class="stat-chips">
+        <span class="chip chip-score">⭐ ${score}</span>
+        <span class="chip chip-life" aria-label="${lives} lives remaining">${lifeDots()}</span>
+        <span class="chip chip-step">${cur+1}/${qs.length}</span>
+      </div>
+    </div>
+    <div class="q-card">
+      <span class="cat-pill">${q.category}</span>
+      <span class="item-icon" role="img" aria-label="${q.name}">${q.emoji}</span>
+      <div class="item-name">${q.name}</div>
+      <div class="item-hint">${q.hint}</div>
+      <div class="prog-track"><div class="prog-fill" style="width:${prog}%"></div></div>
+    </div>
+    <div class="btn-row">
+      <button class="ans-btn halal-btn" onclick="check('halal')" aria-label="Halal — allowed">
+        <span class="btn-icon" aria-hidden="true">✅</span>
+        <span class="btn-title">Halal</span>
+        <span class="btn-sub">Allowed</span>
+      </button>
+      <button class="ans-btn haram-btn" onclick="check('haram')" aria-label="Haram — forbidden">
+        <span class="btn-icon" aria-hidden="true">🚫</span>
+        <span class="btn-title">Haram</span>
+        <span class="btn-sub">Forbidden</span>
+      </button>
+    </div>
+  `;
+}
+
+function check(choice){
+  if(answered)return;
+  answered=true;
+  const q=qs[cur];
+  const ok=choice===q.answer;
+  if(ok)score+=10; else lives--;
+  history.push({q,ok,choice});
+  document.querySelector('.btn-row').style.pointerEvents='none';
+  document.querySelector('.btn-row').style.opacity='.45';
+  const nextLabel=lives<=0||cur+1>=qs.length?'See results →':'Next question →';
+  const fb=`
+    <div class="fb-panel ${ok?'fb-correct':'fb-wrong'}" role="status" aria-live="polite">
+      <span class="fb-icon" aria-hidden="true">${ok?'✅':'💡'}</span>
+      <div>
+        <div class="fb-title ${ok?'correct-t':'wrong-t'}">${ok?'Correct! MashaAllah!':'Not quite right'}</div>
+        <div class="fb-text">${q.explanation}</div>
+      </div>
+    </div>
+    <button class="next-btn" onclick="next()">${nextLabel}</button>
+  `;
+  document.getElementById('ga').insertAdjacentHTML('beforeend',fb);
+  if(lives<=0)setTimeout(renderResults,900);
+}
+
+function next(){answered=false;cur++;render();}
+
+function renderResults(){
+  const pct=Math.round(score/(qs.length*10)*100);
+  const stars=pct>=90?3:pct>=60?2:1;
+  const trophy=pct>=90?'🏆':pct>=60?'⭐':'📚';
+  const msg=pct>=90?'MashaAllah! Excellent knowledge!':pct>=60?'Good effort! Keep learning!':'Keep practising — every step counts.';
+  const starsHtml=Array.from({length:3},(_,i)=>i<stars?'⭐':'☆').join('');
+  const rev=history.map(h=>`
+    <div class="rev-item">
+      <span class="rev-dot ${h.ok?'rev-dot-ok':'rev-dot-no'}" aria-hidden="true"></span>
+      <span class="rev-icon" aria-hidden="true">${h.q.emoji}</span>
+      <div class="rev-text">
+        <div class="rev-name">${h.q.name}</div>
+        <div class="rev-verdict">${h.q.answer.charAt(0).toUpperCase()+h.q.answer.slice(1)}${h.ok?'':' — you chose '+h.choice}</div>
+      </div>
+    </div>`).join('');
+  document.getElementById('ga').innerHTML=`
+    <div class="results">
+      <span class="res-emoji" role="img" aria-label="result">${trophy}</span>
+      <div class="res-title">Quiz complete!</div>
+      <div class="stars" aria-label="${stars} out of 3 stars">${starsHtml}</div>
+      <div class="res-score" aria-label="Score ${score} out of ${qs.length*10}">${score}<span style="font-size:20px;color:#6b7280;font-weight:400"> / ${qs.length*10}</span></div>
+      <div class="res-sub">${msg}</div>
+      <div class="divider"></div>
+      <div class="review-list" aria-label="Answer review">${rev}</div>
+      <button class="again-btn" onclick="start()">Play again</button>
+    </div>
+  `;
+}
+
+start();
+</script>
+</body>
+</html>
